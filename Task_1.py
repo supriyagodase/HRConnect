@@ -8,3 +8,4 @@ print(file_obj)
 # for i in file_obj:
 #     print(i)
 
+# task one
