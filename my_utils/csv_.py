@@ -4,18 +4,6 @@ from datetime import datetime
 
 class HandleCSV():
     filename = (r"D:\Python Lecture\CSV\employees.csv")
-
-    # @classmethod
-    # def read_entire_csv(cls):
-    #     with open(cls.filename,"r")as foo:
-    #         # print(dir(foo))# readmode
-    #         return foo.readline()
-    #
-    # @classmethod
-    # def read_csv_line_by_line(cls):
-    #     with open(cls.filename,"r")as bar:
-    #         yield bar.readline()
-
     @classmethod
     def read_as_dict(cls):
         with open(cls.filename) as csvfile:
