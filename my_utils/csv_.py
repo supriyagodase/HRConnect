@@ -1,65 +1,70 @@
 import csv
 from csv import reader
+from datetime import datetime
 
 class HandleCSV():
     filename = (r"D:\Python Lecture\CSV\employees.csv")
 
-    @classmethod
-    def read_entire_csv(cls):
-        with open(cls.filename,"r")as foo:
-            # print(dir(foo))# readmode
-            return foo.readline()
+    # @classmethod
+    # def read_entire_csv(cls):
+    #     with open(cls.filename,"r")as foo:
+    #         # print(dir(foo))# readmode
+    #         return foo.readline()
+    #
+    # @classmethod
+    # def read_csv_line_by_line(cls):
+    #     with open(cls.filename,"r")as bar:
+    #         yield bar.readline()
 
     @classmethod
-    def read_csv_line_by_line(cls):
-        with open(cls.filename,"r")as bar:
-            yield bar.readline()
-
-    @classmethod
-    # new_dict = {}
     def read_as_dict(cls):
         with open(cls.filename) as csvfile:
-            data=csv.DictReader(csvfile)
-            emp_list=[]
-            for i in data:
-                new_dict = {}
-                for key,val in i.items():
-                    if key in ['FIRST_NAME', 'LAST_NAME', 'PHONE_NUMBER', 'SALARY']:
-                        # print(key, val)
-                        if key == 'PHONE_NUMBER':
-                            new_dict[key] =val.replace('.', '')
-                        else:
-                            new_dict[key]= val
-                    # if 'SALARY' >int(9000):
-                    # new_dict[key]=val
-                    # list.append(new_dict)
-                # print(new_dict)
-                if int(new_dict['SALARY']) > 9000:
-                    emp_list.append(new_dict)
-            # print(len(emp_list))
-            return emp_list
+            data = csv.reader(csvfile)
+            # for i in data:
+            #     print(i)
+            headers = next(data)
+            # print(headers)
+            return [dict(zip(headers, i)) for i in data]
 
-    def filter_data(list,):
-        for i in list:
-            print(i[7])
+    @classmethod
+    def task_one(cls):
+        list_ = cls.read_as_dict()
+        list2 = []
+        for i in list_: # dictionary
+            if int(i.get('SALARY')) > 9000:
+                list2.append({'name': i.get('FIRST_NAME')+''+i.get('LAST_NAME'), 'email': i.get('EMAIL'),
+                              'phone_number': i.get('PHONE_NUMBER').replace('.', '')})
+        return list2
 
+    @classmethod
+    def date_convert(cls, date) -> str:
+        """
+        convert received date in date format
+        :param date: date in format '21-Jun-07'
+        :return:date in format yyyy-mm-dd
+        """
+        date_format = "%d-%b-%y"   # date format for '21-Jun-07'
+        hire_date = datetime.strptime(date, date_format)  # return 2018-12-31 00:00:00
+        hire_date = hire_date.date()  # convert into 2018-12-31
 
-                # if i.get('SALARY') > int(9000):
-                #     return i
+        return str(hire_date)
 
+    @classmethod
+    def task_two(cls):
+        emp_details = {} #dep id bet 30 and 110 salary gret than 4200
+        for i in cls.read_as_dict():
+            if 30 <= int(i.get('DEPARTMENT_ID')) <= 110 and int(i.get('SALARY')) > 4200:
+                hire_date = cls.date_convert(i.get('HIRE_DATE'))
+                name = i.get('FIRST_NAME')+''+i.get('LAST_NAME')
+                if emp_details.get(hire_date)is None:
+                    emp_details.setdefault(hire_date,[name])
+                else:
+                    emp_details[hire_date].append(name)
+        return emp_details
 
 
 if __name__ == "__main__" :
     obj = HandleCSV()
-    # obj1= obj.read_entire_csv()
-    # print(obj1)
-    # print(type(obj1))
-    # obj2 = obj.read_csv_line_by_line()
-    print(obj.read_as_dict())
-    # print(next(obj2))
-    # for i in obj2:
-    #     print(next(obj2))
-
-
-
-
+    # print(obj.read_as_dict())
+    print(obj.task_one())
+    print(obj.task_two())
